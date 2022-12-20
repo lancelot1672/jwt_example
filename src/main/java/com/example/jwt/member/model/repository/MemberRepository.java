@@ -8,4 +8,5 @@ import java.sql.SQLException;
 @Repository
 public interface MemberRepository {
     public void insert(MemberDTO memberDTO) throws SQLException;
+    public MemberDTO selectOne(String userId) throws SQLException;
 }
