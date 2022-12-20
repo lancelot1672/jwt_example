@@ -28,5 +28,8 @@ public class MemberService {
         //join request
         memberRepository.insert(memberDTO);
     }
+    public MemberDTO findOne(String userId) throws SQLException{
+        return memberRepository.findByUserId(userId);
+    }
 
 }

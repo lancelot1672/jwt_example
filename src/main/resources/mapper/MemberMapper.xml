@@ -7,4 +7,17 @@
         insert into user (user_id, password, user_name, user_email, join_date)
         values (#{userId},#{password},#{userName},#{userEmail},now())
     </insert>
+
+    <select id="findByUserId" resultMap="memberDTO">
+        SELECT *
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
+    <resultMap id="memberDTO" type="com.example.jwt.member.model.entity.MemberDTO">
+        <result column="user_id" property="userId"/>
+        <result column="password" property="password"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_email" property="userEmail"/>
+        <result column="join_date" property="joinDate"/>
+    </resultMap>
 </mapper>
