@@ -30,7 +30,24 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberDTO findOne(String userId) throws SQLException{
+    public MemberDTO findById(String userId) throws SQLException {
         return memberRepository.findByUserId(userId);
+    }
+
+    @Override
+    public MemberDTO login(MemberDTO memberDTO) throws SQLException {
+        //GET member Info
+        MemberDTO loginMember = memberRepository.findByUserId(memberDTO.getUserId());
+
+        // 비밀번호 match 확인
+        if(passwordEncoder.matches(memberDTO.getPassword(),loginMember.getPassword())){
+            return loginMember;
+        }
+        return null;
+    }
+
+    @Override
+    public void updateToken(MemberDTO memberDTO) throws SQLException {
+        memberRepository.updateToken(memberDTO);
     }
 }

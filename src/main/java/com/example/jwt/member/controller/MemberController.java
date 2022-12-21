@@ -1,8 +1,10 @@
 package com.example.jwt.member.controller;
 
 import com.example.jwt.member.model.entity.MemberDTO;
+import com.example.jwt.member.model.service.JwtService;
 import com.example.jwt.member.model.service.MemberService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,10 +16,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/member")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MemberController {
     private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
+    private final JwtService jwtService;
 
     @GetMapping("/")
     public String home(){
@@ -27,7 +30,7 @@ public class MemberController {
     public ResponseEntity<?> join(@RequestBody MemberDTO memberDTO){
         HttpStatus status = HttpStatus.OK;  // Http 응답
         Map<String, Object> resultMap = new HashMap<>();
-        
+
         logger.info("{}",memberDTO);    //log 찍어보기
 
         try{
@@ -44,6 +47,45 @@ public class MemberController {
 
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody MemberDTO memberDTO){
+        logger.info("{}",memberDTO);
 
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+
+        //로그인 정보 가져오기
+        try{
+            MemberDTO loginMember = memberService.login(memberDTO);
+            if(loginMember == null){
+                // 로그인 정보가 없으면.
+                resultMap.put("message","로그인 정보 Error");
+                status = HttpStatus.ACCEPTED;
+                return new ResponseEntity<Map<String, Object>>(resultMap, status);
+            }
+            // 있다면 토큰 발급
+            // Access Token 발급
+            String access_Token = jwtService.createAccessToken(memberDTO);
+            logger.info("Access-Token : {}", access_Token);
+
+            // Refresh Token 재발급
+            String refresh_Token = jwtService.createRefreshToken(memberDTO);
+            logger.info("Refresh-Token : {}", refresh_Token);
+
+            //DB에 Refresh-Token update
+            memberDTO.setToken(refresh_Token);
+            memberService.updateToken(memberDTO);
+
+            // resultMap
+            resultMap.put("Access-Token", access_Token);
+            resultMap.put("Refresh-Token", refresh_Token);
+            status = HttpStatus.OK;
+
+        }catch (Exception e){
+            //에러 처리
+            e.printStackTrace();
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+    }
 
 }

@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 public interface MemberService {
     public void join(MemberDTO memberDTO) throws SQLException;
-    public MemberDTO findOne(String userId) throws SQLException;
-
+    public MemberDTO findById(String userId) throws SQLException;
+    public MemberDTO login(MemberDTO memberDTO) throws SQLException;
+    public void updateToken(MemberDTO memberDTO) throws SQLException;
 }

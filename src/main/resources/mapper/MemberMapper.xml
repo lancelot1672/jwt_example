@@ -7,7 +7,11 @@
         insert into user (user_id, password, user_name, user_email, join_date)
         values (#{userId},#{password},#{userName},#{userEmail},now())
     </insert>
-
+    <update id="updateToken">
+        UPDATE user
+        SET token = #{token}
+        WHERE user_id = #{userId}
+    </update>
     <select id="findByUserId" resultMap="memberDTO">
         SELECT *
         FROM user

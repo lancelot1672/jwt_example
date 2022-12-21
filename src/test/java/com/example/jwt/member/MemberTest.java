@@ -31,7 +31,7 @@ public class MemberTest {
 
         memberService.join(memberDTO);  // 회원가입
 
-        MemberDTO findMember = memberService.findOne("test1234");
+        MemberDTO findMember = memberService.findById("test1234");
 
         Assertions.assertThat(memberDTO).isEqualTo(memberDTO);
 

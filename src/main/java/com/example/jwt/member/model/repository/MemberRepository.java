@@ -9,4 +9,5 @@ import java.sql.SQLException;
 public interface MemberRepository {
     public void insert(MemberDTO memberDTO) throws SQLException;
     public MemberDTO findByUserId(String userId) throws SQLException;
+    public void updateToken(MemberDTO memberDTO) throws SQLException;
 }
