@@ -87,5 +87,31 @@ public class MemberController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
+    @GetMapping("/info")
+    public ResponseEntity<?> getInfo(@RequestParam String token){
+        logger.info("token : {}", token);
+        Map<String,Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
 
+        //check Token
+        String isValid = jwtService.checkToken(token);
+
+        if(isValid != null){    // 유효한 토큰
+            // 토큰
+            logger.info("Token is valid");
+            try{
+                resultMap.put("claims", isValid);
+                status = HttpStatus.OK;
+            }catch(Exception e){
+                resultMap.put("message", "No User");
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }else{  // 유효하지 않은 토큰
+            // 토큰 재발급
+            resultMap.put("message", "fail");
+            status = HttpStatus.UNAUTHORIZED;   // 401
+
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
 }

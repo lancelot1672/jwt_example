@@ -8,5 +8,5 @@ public interface JwtService {
     public String createRefreshToken(MemberDTO memberDTO);
     public <T> String createToken(String key, T data, String subject, long expire_time);
 
-
+    public String checkToken(String token);
 }
